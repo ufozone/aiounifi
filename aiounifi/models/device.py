@@ -300,6 +300,14 @@ class TypedDeviceSystemStats(TypedDict):
     uptime: str
 
 
+class TypedDeviceTemperature(TypedDict):
+    """Device temperature type definition."""
+
+    name: str
+    type: str
+    value: float
+
+
 class TypedDeviceUplink(TypedDict):
     """Device uplink type definition."""
 
@@ -330,6 +338,28 @@ class TypedDeviceUplink(TypedDict):
     uplink_remote_port: int
 
 
+class TypedDeviceUptimeStatsWanMonitor(TypedDict):
+    """Device uptime stats wan monitor type definition."""
+
+    availability: float
+    latency_average: NotRequired[int]
+    target: str
+    type: str
+
+
+class TypedDeviceUptimeStatsWan(TypedDict):
+    """Device uptime stats wan type definition."""
+
+    monitors: list[TypedDeviceUptimeStatsWanMonitor]
+
+
+class TypedDeviceUptimeStats(TypedDict):
+    """Device uptime stats type definition."""
+
+    WAN: TypedDeviceUptimeStatsWan
+    WAN2: TypedDeviceUptimeStatsWan
+
+
 class TypedDeviceWlanOverrides(TypedDict):
     """Device wlan overrides type definition."""
 
@@ -351,6 +381,16 @@ class TypedDeviceSpeedtestStatus(TypedDict):
     status_upload: int
     xput_download: float
     xput_upload: float
+
+
+class TypedDeviceStorage(TypedDict):
+    """Device storage type definition."""
+
+    mount_point: str
+    name: str
+    size: int
+    type: str
+    used: int
 
 
 class TypedDevice(TypedDict):
@@ -469,6 +509,7 @@ class TypedDevice(TypedDict):
     start_disconnected_millis: int
     stat: dict  # type: ignore[type-arg]
     state: int
+    storage: list[TypedDeviceStorage] | None
     stp_priority: str
     stp_version: str
     switch_caps: TypedDeviceSwitchCaps
@@ -476,6 +517,7 @@ class TypedDevice(TypedDict):
     sys_stats: TypedDeviceSysStats
     syslog_key: str
     system_stats: TypedDeviceSystemStats
+    temperatures: list[TypedDeviceTemperature] | None
     two_phase_adopt: bool
     tx_bytes: int
     tx_bytes_d: int
@@ -489,6 +531,7 @@ class TypedDevice(TypedDict):
     uplink_depth: int
     uplink_table: list  # type: ignore[type-arg]
     uptime: int
+    uptime_stats: TypedDeviceUptimeStats | None
     user_num_sta: int
     user_wlan_num_sta: int
     usg_caps: int
@@ -926,6 +969,11 @@ class Device(ApiItem):
         return DeviceState(self.raw["state"])
 
     @property
+    def storage(self) -> list[TypedDeviceStorage] | None:
+        """Device storage information."""
+        return self.raw.get("storage")
+
+    @property
     def sys_stats(self) -> TypedDeviceSysStats:
         """Output from top."""
         return self.raw["sys_stats"]
@@ -935,6 +983,11 @@ class Device(ApiItem):
         """System statistics."""
         data = self.raw["system-stats"]  # type: ignore [typeddict-item]
         return (data.get("cpu", ""), data.get("mem", ""), data.get("uptime", ""))
+
+    @property
+    def temperatures(self) -> list[TypedDeviceTemperature] | None:
+        """Device temperature sensors."""
+        return self.raw.get("temperatures")
 
     @property
     def type(self) -> str:
@@ -970,6 +1023,11 @@ class Device(ApiItem):
     def uptime(self) -> int:
         """Uptime of device."""
         return self.raw.get("uptime", 0)
+
+    @property
+    def uptime_stats(self) -> TypedDeviceUptimeStats | None:
+        """Uptime statistics."""
+        return self.raw.get("uptime_stats")
 
     @property
     def user_num_sta(self) -> int:

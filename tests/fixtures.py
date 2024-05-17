@@ -1039,6 +1039,22 @@ GATEWAY_USG3 = {
         }
     },
     "state": 1,
+    "storage": [
+        {
+            "mount_point": "/persistent",
+            "name": "Backup",
+            "size": 2040373248,
+            "type": "eMMC",
+            "used": 148353024,
+        },
+        {
+            "mount_point": "/tmp",
+            "name": "Temporary",
+            "size": 1073741824,
+            "type": "other",
+            "used": 90112,
+        },
+    ],
     "sys_stats": {
         "loadavg_1": "0.03",
         "loadavg_15": "0.08",
@@ -1049,6 +1065,11 @@ GATEWAY_USG3 = {
     },
     "syslog_key": "3456789098098769876543",
     "system-stats": {"cpu": "0", "mem": "25", "uptime": "3971505"},
+    "temperatures": [
+        {"name": "CPU", "type": "cpu", "value": 66.0},
+        {"name": "Local", "type": "board", "value": 48.75},
+        {"name": "PHY", "type": "board", "value": 50.25},
+    ],
     "two_phase_adopt": False,
     "tx_bytes": 1107294012155,
     "type": "ugw",
@@ -1093,6 +1114,41 @@ GATEWAY_USG3 = {
         "xput_up": 0.0,
     },
     "uptime": 3971869,
+    "uptime_stats": {
+        "WAN": {
+            "monitors": [
+                {
+                    "availability": 100.0,
+                    "latency_average": 5,
+                    "target": "www.microsoft.com",
+                    "type": "icmp",
+                },
+                {
+                    "availability": 100.0,
+                    "latency_average": 7,
+                    "target": "google.com",
+                    "type": "icmp",
+                },
+                {
+                    "availability": 100.0,
+                    "latency_average": 5,
+                    "target": "1.1.1.1",
+                    "type": "icmp",
+                },
+            ]
+        },
+        "WAN2": {
+            "monitors": [
+                {
+                    "availability": 0.0,
+                    "target": "www.microsoft.com",
+                    "type": "icmp",
+                },
+                {"availability": 0.0, "target": "google.com", "type": "icmp"},
+                {"availability": 0.0, "target": "1.1.1.1", "type": "icmp"},
+            ]
+        },
+    },
     "user-num_sta": 20,
     "usg_caps": 786431,
     "version": "4.4.44.5213844",
