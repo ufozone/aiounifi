@@ -39,6 +39,7 @@ class EventKey(enum.Enum):
 
     DREAM_MACHINE_CONNECTED = "EVT_DM_Connected"
     DREAM_MACHINE_LOST_CONTACT = "EVT_DM_Lost_Contact"
+    DREAM_MACHINE_UPGRADED = "EVT_DM_Upgraded"
 
     GATEWAY_ADOPTED = "EVT_GW_Adopted"
     GATEWAY_AUTO_READOPTED = "EVT_GW_AutoReadopted"
@@ -60,7 +61,7 @@ class EventKey(enum.Enum):
     SWITCH_DISCOVERED_PENDING = "EVT_SW_DiscoveredPending"
     SWITCH_LOST_CONTACT = "EVT_SW_Lost_Contact"
     SWITCH_OVERHEAT = "EVT_SW_Overheat"
-    SWITCH_POE_OVERLOAD = "EVT_SW_POE_Overload"
+    SWITCH_POE_OVERLOAD = "EVT_SW_PoeOverload"
     SWITCH_POE_DISCONNECT = "EVT_SW_PoeDisconnect"
     SWITCH_RESTARTED = "EVT_SW_Restarted"
     SWITCH_RESTARTED_UNKNOWN = "EVT_SW_RestartedUnknown"

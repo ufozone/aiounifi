@@ -28,7 +28,7 @@ dependencies    = [
 [project.optional-dependencies]
 requirements = [
     "aiohttp==3.9.5",
-    "orjson==3.10.3",
+    "orjson==3.10.5",
     "segno==1.6.1",
 ]
 requirements_test = [
@@ -38,7 +38,7 @@ requirements_test = [
     "pytest-aiohttp==1.0.5",
     "pytest-asyncio==0.23.7",
     "pytest-cov==5.0.0",
-    "ruff==0.4.8",
+    "ruff==0.4.9",
     "trustme==1.1.0",
     "types-orjson==3.6.2",
 ]
