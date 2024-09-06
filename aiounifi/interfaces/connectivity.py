@@ -6,6 +6,7 @@ from collections.abc import Callable, Mapping
 import datetime
 from http import HTTPStatus
 import logging
+import sys
 from typing import TYPE_CHECKING, Any
 
 import aiohttp
@@ -24,6 +25,13 @@ from ..errors import (
 )
 from ..models.api import ERRORS
 from ..models.configuration import Configuration
+
+if sys.version_info[:2] < (3, 13):
+    from http import cookies
+
+    # See: https://github.com/python/cpython/issues/112713
+    cookies.Morsel._reserved["partitioned"] = "partitioned"  # type: ignore[attr-defined]
+    cookies.Morsel._flags.add("partitioned")  # type: ignore[attr-defined]
 
 if TYPE_CHECKING:
     from ..models.api import ApiRequest, TypedApiResponse
@@ -116,10 +124,10 @@ class Connectivity:
         method: str,
         url: str,
         json: Mapping[str, Any] | None = None,
-        **kwargs: bool,
+        allow_redirects: bool = True,
     ) -> tuple[aiohttp.ClientResponse, bytes]:
         """Make a request to the API."""
-        LOGGER.debug("sending (to %s) %s, %s, %s", url, method, json, kwargs)
+        LOGGER.debug("sending (to %s) %s, %s, %s", url, method, json, allow_redirects)
         bytes_data = b""
 
         try:
@@ -129,7 +137,7 @@ class Connectivity:
                 json=json,
                 ssl=self.config.ssl_context,
                 headers=self.headers,
-                **kwargs,
+                allow_redirects=allow_redirects,
             ) as res:
                 LOGGER.debug(
                     "received (from %s) %s %s %s",
@@ -182,7 +190,12 @@ class Connectivity:
                 heartbeat=15,
                 compress=12,
             ) as websocket_connection:
-                LOGGER.debug("Connected to UniFi websocket %s", url)
+                LOGGER.debug(
+                    "Connected to UniFi websocket %s, headers: %s, cookiejar: %s",
+                    url,
+                    self.headers,
+                    self.config.session.cookie_jar._cookies,  # type: ignore[attr-defined]
+                )
 
                 async for message in websocket_connection:
                     self.ws_message_received = datetime.datetime.now(datetime.UTC)
