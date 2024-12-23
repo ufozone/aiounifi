@@ -1,10 +1,10 @@
 [build-system]
-requires = ["setuptools==68.0.0", "wheel==0.40.0"]
+requires = ["setuptools==75.6.0", "wheel==0.45.1"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name        = "aiounifi"
-version     = "80"
+version     = "81"
 license     = {text = "MIT"}
 description = "Python library for communicating with UniFi Network Controller API"
 readme      = "README.md"
@@ -27,23 +27,23 @@ dependencies    = [
 
 [project.optional-dependencies]
 requirements = [
-    "aiohttp==3.10.5",
-    "orjson==3.10.7",
+    "aiohttp==3.11.11",
+    "orjson==3.10.12",
     "segno==1.6.1",
 ]
-requirements_test = [
-    "aioresponses==0.7.6",
-    "mypy==1.11.2",
-    "pytest==8.3.2",
+requirements-test = [
+    "aioresponses==0.7.7",
+    "mypy==1.13.0",
+    "pytest==8.3.4",
     "pytest-aiohttp==1.0.5",
-    "pytest-asyncio==0.24.0",
-    "pytest-cov==5.0.0",
-    "ruff==0.6.4",
-    "trustme==1.1.0",
+    "pytest-asyncio==0.25.0",
+    "pytest-cov==6.0.0",
+    "ruff==0.8.4",
+    "trustme==1.2.0",
     "types-orjson==3.6.2",
 ]
-requirements_dev = [
-    "pre-commit==3.8.0"
+requirements-dev = [
+    "pre-commit==4.0.1"
 ]
 
 [project.urls]
