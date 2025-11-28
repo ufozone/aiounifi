@@ -3688,8 +3688,7 @@ PDU_PRO = {
     "device_id": "61e4a1e60bbb2d53aeb430ea",
     "dhcp_server_table": [],
     "disconnection_reason": (
-        "MISSED_INFORM, last_seen '1643657061', "
-        "considered_lost '1643657117', state: 1"
+        "MISSED_INFORM, last_seen '1643657061', considered_lost '1643657117', state: 1"
     ),
     "displayable_version": "5.76.7",
     "dot1x_portctrl_enabled": False,
@@ -4250,6 +4249,7 @@ WLANS = [
         "enabled": False,
         "group_rekey": 3600,
         "is_guest": True,
+        "hide_ssid": True,
         "mac_filter_enabled": False,
         "mac_filter_list": [],
         "mac_filter_policy": "allow",
@@ -4443,8 +4443,8 @@ EVENT_WIRELESS_CLIENT_CONNECTED = {
             "hostname": WIRELESS_CLIENT["hostname"],
             "key": "EVT_WU_Connected",
             "msg": (
-                f'User[{WIRELESS_CLIENT["mac"]}] has connected '
-                f'to AP[{WIRELESS_CLIENT["ap_mac"]}] with SSID '
+                f"User[{WIRELESS_CLIENT['mac']}] has connected "
+                f"to AP[{WIRELESS_CLIENT['ap_mac']}] with SSID "
                 f'"{WIRELESS_CLIENT["essid"]}" on "channel '
                 f'{WIRELESS_CLIENT["channel"]}({WIRELESS_CLIENT["radio"]})"'
             ),
@@ -4470,9 +4470,9 @@ EVENT_WIRELESS_CLIENT_DISCONNECTED = {
             "hostname": WIRELESS_CLIENT["hostname"],
             "key": "EVT_WU_Disconnected",
             "msg": (
-                f'User[{WIRELESS_CLIENT["mac"]}] disconnected from '
+                f"User[{WIRELESS_CLIENT['mac']}] disconnected from "
                 f'"{WIRELESS_CLIENT["essid"]}" (7m 47s connected, 448.28K bytes, '
-                f'last AP[{WIRELESS_CLIENT["ap_mac"]}])'
+                f"last AP[{WIRELESS_CLIENT['ap_mac']}])"
             ),
             "site_id": WIRELESS_CLIENT["site_id"],
             "ssid": WIRELESS_CLIENT["essid"],
@@ -4490,7 +4490,7 @@ EVENT_WIRELESS_CLIENT_WIRED_CONNECTED = {
             "_id": "5ea3304330c49e00f90dcc35",
             "datetime": "2020-04-24T18:30:22Z",
             "key": "EVT_LU_Connected",
-            "msg": f'User{[WIRELESS_CLIENT["mac"]]} has connected to LAN',
+            "msg": f"User{[WIRELESS_CLIENT['mac']]} has connected to LAN",
             "network": "LAN",
             "site_id": WIRELESS_CLIENT["site_id"],
             "subsystem": "lan",
@@ -4530,7 +4530,7 @@ EVENT_SWITCH_16_CONNECTED = {
             "_id": "5eae82572ab79c00f9d39b38",
             "datetime": "2020-05-03T08:35:35Z",
             "key": "EVT_SW_Connected",
-            "msg": f'Switch[{SWITCH_16_PORT_POE["mac"]}] was connected',
+            "msg": f"Switch[{SWITCH_16_PORT_POE['mac']}] was connected",
             "site_id": SWITCH_16_PORT_POE["site_id"],
             "subsystem": "lan",
             "sw": SWITCH_16_PORT_POE["mac"],
@@ -4547,7 +4547,7 @@ EVENT_SWITCH_16_RESTARTED_UNKOWN = {
             "_id": "5ea9e37030c49e010363ee0b",
             "datetime": "2020-04-29T20:27:24Z",
             "key": "EVT_SW_RestartedUnknown",
-            "msg": f'Switch[{SWITCH_16_PORT_POE["mac"]}] was restarted',
+            "msg": f"Switch[{SWITCH_16_PORT_POE['mac']}] was restarted",
             "site_id": SWITCH_16_PORT_POE["site_id"],
             "subsystem": "lan",
             "sw": SWITCH_16_PORT_POE["mac"],
@@ -4564,7 +4564,7 @@ EVENT_SWITCH_16_LOST_CONTACT = {
             "_id": "5eae7fe02ab79c00f9d38960",
             "datetime": "2020-05-03T08:25:04Z",
             "key": "EVT_SW_Lost_Contact",
-            "msg": f'Switch[{SWITCH_16_PORT_POE["mac"]}] was disconnected',
+            "msg": f"Switch[{SWITCH_16_PORT_POE['mac']}] was disconnected",
             "site_id": SWITCH_16_PORT_POE["site_id"],
             "subsystem": "lan",
             "sw": SWITCH_16_PORT_POE["mac"],
@@ -4582,7 +4582,7 @@ EVENT_SWITCH_16_UPGRADED = {
             "datetime": "2020-05-09T20:06:37Z",
             "key": "EVT_SW_Upgraded",
             "msg": (
-                f'Switch[{SWITCH_16_PORT_POE["mac"]}] was upgraded from '
+                f"Switch[{SWITCH_16_PORT_POE['mac']}] was upgraded from "
                 '"4.0.66.10832" to "4.3.13.11253"'
             ),
             "site_id": SWITCH_16_PORT_POE["site_id"],
@@ -4790,4 +4790,64 @@ TRAFFIC_ROUTES = [
             {"network_id": WIRELESS_CLIENT["network_id"], "type": "NETWORK"}
         ],
     },
+]
+
+FIREWALL_ZONES = [
+    {
+        "_id": "678ccc26e3849d2932432e26",
+        "name": "LAN",
+        "attr_no_edit": True,
+        "default_zone": True,
+        "network_ids": ["678ccc26e3849d2932432e20"],
+        "zone_key": "lan",
+    },
+    {
+        "_id": "678c63bc2d97692f08adcdfb",
+        "name": "WAN",
+        "attr_no_edit": True,
+        "default_zone": True,
+        "network_ids": ["678c63bc2d97692f08adcdf5"],
+        "zone_key": "wan",
+    },
+]
+
+FIREWALL_POLICIES = [
+    {
+        "_id": "678ceb9fe3849d293243405c",
+        "action": "ALLOW",
+        "connection_state_type": "ALL",
+        "connection_states": [],
+        "create_allow_respond": True,
+        "description": "",
+        "destination": {
+            "match_opposite_ports": False,
+            "matching_target": "ANY",
+            "port_matching_type": "ANY",
+            "zone_id": "678ccc26e3849d2932432e26",
+        },
+        "enabled": True,
+        "icmp_typename": "ANY",
+        "icmp_v6_typename": "ANY",
+        "index": 10000,
+        "ip_version": "BOTH",
+        "logging": False,
+        "match_ip_sec": False,
+        "match_opposite_protocol": False,
+        "name": "Allow internal to IoT",
+        "predefined": False,
+        "protocol": "all",
+        "schedule": {
+            "mode": "EVERY_DAY",
+            "repeat_on_days": [],
+            "time_all_day": False,
+            "time_range_end": "12:00",
+            "time_range_start": "09:00",
+        },
+        "source": {
+            "match_opposite_ports": False,
+            "matching_target": "ANY",
+            "port_matching_type": "ANY",
+            "zone_id": "678c63bc2d97692f08adcdfa",
+        },
+    }
 ]

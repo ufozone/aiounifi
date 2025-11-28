@@ -136,6 +136,7 @@ class TypedDevicePortOverrides(TypedDict, total=False):
 
     poe_mode: str
     port_idx: int
+    port_security_enabled: bool
     portconf_id: str
 
 
@@ -773,6 +774,59 @@ class DeviceSetPoePortModeRequest(ApiRequest):
 
 
 @dataclass
+class DeviceSetPortEnabledRequest(ApiRequest):
+    """Request object for setting port enabled state."""
+
+    @classmethod
+    def create(
+        cls,
+        device: Device,
+        port_idx: int | None = None,
+        enabled: bool | None = None,
+        targets: list[tuple[int, bool]] | None = None,
+    ) -> Self:
+        """Create device set port enabled state request.
+
+        True:  port is enabled.
+        False: port is disabled.
+        Make sure to not overwrite any existing configs.
+        """
+        overrides: list[tuple[int, bool]] = []
+        if port_idx is not None and enabled is not None:
+            overrides.append((port_idx, enabled))
+        elif targets is not None:
+            overrides = targets
+        else:
+            raise AttributeError
+
+        port_overrides = deepcopy(device.port_overrides)
+
+        for override in overrides:
+            port_idx, enabled = override
+
+            existing_override = False
+            for port_override in port_overrides:
+                if port_idx == port_override.get("port_idx"):
+                    port_override["port_security_enabled"] = not enabled
+                    existing_override = True
+                    break
+
+            if existing_override:
+                continue
+
+            port_override = {"port_idx": port_idx, "port_security_enabled": not enabled}
+            if portconf_id := device.port_table[port_idx - 1].get("portconf_id"):
+                port_override["portconf_id"] = portconf_id
+            port_overrides.append(port_override)
+
+        return cls(
+            method="put",
+            path=f"/rest/device/{device.id}",
+            data={"port_overrides": port_overrides},
+        )
+
+
+@dataclass
 class DeviceSetLedStatus(ApiRequest):
     """Request object for setting LED status of device."""
 
@@ -889,7 +943,10 @@ class Device(ApiItem):
     @property
     def led_override_color_brightness(self) -> int | None:
         """LED override color brightness."""
-        return self.raw.get("led_override_color_brightness")
+        if (value := self.raw.get("led_override_color_brightness")) is not None:
+            # UniFi API has been observed to return string values for this field.
+            return int(value)
+        return None
 
     @property
     def lldp_table(self) -> list[TypedDeviceLldpTable]:
