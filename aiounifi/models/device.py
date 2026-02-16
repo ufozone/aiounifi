@@ -461,7 +461,7 @@ class TypedDevice(TypedDict):
     lcm_tracker_enabled: bool
     led_override: str
     led_override_color: str
-    led_override_color_brightness: int
+    led_override_color_brightness: NotRequired[int]
     license_state: str
     lldp_table: list[TypedDeviceLldpTable]
     locating: bool
@@ -648,6 +648,25 @@ class DeviceUpgradeRequest(ApiRequest):
                 "cmd": "upgrade",
                 "mac": mac,
             },
+        )
+
+
+@dataclass
+class DeviceLocateRequest(ApiRequest):
+    """Request object for device locate mode."""
+
+    @classmethod
+    def create(cls, mac: str, locate: bool) -> Self:
+        """Enable or disable device locate mode."""
+        if locate:
+            data = {"cmd": "set-locate", "mac": mac}
+        else:
+            data = {"cmd": "unset-locate", "mac": mac}
+
+        return cls(
+            method="post",
+            path="/cmd/devmgr",
+            data=data,
         )
 
 
@@ -949,6 +968,11 @@ class Device(ApiItem):
         return None
 
     @property
+    def locating(self) -> bool | None:
+        """Return if device locate mode is enabled."""
+        return self.raw.get("locating")
+
+    @property
     def lldp_table(self) -> list[TypedDeviceLldpTable]:
         """All clients and devices directly attached to device."""
         return self.raw.get("lldp_table", [])
@@ -1102,6 +1126,11 @@ class Device(ApiItem):
     def supports_led_ring(self) -> bool:
         """Check if the hardware supports an LED ring based on the second bit of `hw_caps`."""
         return bool(self.hw_caps & HardwareCapability.LED_RING)
+
+    @property
+    def supports_locating(self) -> bool:
+        """Check if the device reports locate capability."""
+        return "locating" in self.raw
 
     def __repr__(self) -> str:
         """Return the representation."""
